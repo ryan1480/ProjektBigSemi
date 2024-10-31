@@ -35,7 +35,7 @@ public class EventProcessorAdvanced {
 
 		KStream<String, String> source = builder.stream(group + "__orders");
 		
-		// This section describes how we handle our data stream---------
+		// This section describes how we handle our data stream
 		TimeWindows tw = TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5));
 		source.groupByKey().windowedBy(tw).aggregate( // Time window of 5 seconds, always looks at 5 second intervals of events
 				() -> new CountAndSum(), 	// the initial value for the aggregation
@@ -46,7 +46,6 @@ public class EventProcessorAdvanced {
                 Materialized.with(Serdes.String(), new AggregateResultSerde())
 				).mapValues( (cs) -> cs.getAverage())
 		.toStream().foreach(new MyProcessor());;
-		// -------------------------------------------------------------
 		
 	
 		
