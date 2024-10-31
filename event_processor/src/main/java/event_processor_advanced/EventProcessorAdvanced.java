@@ -19,7 +19,7 @@ public class EventProcessorAdvanced {
 
 	public static void main(String[] args) {
 		/// !!!!!!!!!!!!!!!!!!!!!! Name of group:
-		String group = "group0"; //// CHANGE ME!!!!
+		String group = "group3"; //// CHANGE ME!!!!
 
 		Properties props = new Properties();
 		props.put(StreamsConfig.APPLICATION_ID_CONFIG, "stream_processor-" + group);

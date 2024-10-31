@@ -7,7 +7,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-// Test
+
 public class EventGenerator {
 
 	public static void main(String[] args) {
@@ -16,7 +16,7 @@ public class EventGenerator {
 
 		// Name of the Kafka topic to publish the events to (please keep the group name
 		// as prefix to prevent conflicts with other groups)
-		String topic = group + "__orders"; // note: on the first run with a new topic name you will get a waring
+		String topic = group + "_orders"; // note: on the first run with a new topic name you will get a waring
 													// regarding a failure to fetch metadata. This happens as the stream
 													// is only created after the first message was sent.
 
