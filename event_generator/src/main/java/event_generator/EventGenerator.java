@@ -1,7 +1,9 @@
 package event_generator;
 
 import java.time.Duration;
+
 import java.util.Properties;
+import java.util.Random;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -12,7 +14,8 @@ public class EventGenerator {
 
 	public static void main(String[] args) {
 		
-		String group = "group3";
+		/// !!!!!!!!!!!!!!!!!!!!!! Name of group:
+		String group = "group3"; //// CHANGE ME!!!!
 
 		// Name of the Kafka topic to publish the events to (please keep the group name
 		// as prefix to prevent conflicts with other groups)
@@ -38,24 +41,55 @@ public class EventGenerator {
 
 		for (;;) { // endless loop
 
-			String key = "The Eco-Tee"; // always the same product
-			String value = "" + Math.floor(Math.random() * 5 + 1); // a random quantity
+			Random random = new Random();
+			boolean randomizer = random.nextBoolean();
+			
+			if (randomizer == true) 
+			{
+				String key = "Eco-Socks (Pack of 3)"; // always the same product
+				String quantity = "" + Math.floor(Math.random() * 19 + 1); // a random quantity
 
-			// now create and send the event to Kafka
-			ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, value);
-			producer.send(record, (RecordMetadata metadata, Exception exception) -> {
-				if (exception != null) {
-					exception.printStackTrace();
-				} else {
-					System.out.printf("Sent event(key=%s value=%s)%n", key, value);
-				}
-			});
+				// now create and send the event to Kafka
+				ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, quantity);
+				producer.send(record, (RecordMetadata metadata, Exception exception) -> {
+					if (exception != null) {
+						exception.printStackTrace();
+					} else {
+						System.out.printf("Generated Event:(Product: \"%s\"; Quantity: %s)%n", key, quantity);
+					}
+				});
 
-			// wait a little
-			try {
-				Thread.sleep(Duration.ofSeconds(2));
-			} catch (InterruptedException e) {
+				// wait a little
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) 
+				{
+				}			
 			}
+			else 
+			{
+				String key = "The Eco-Tee"; // always the same product
+				String quantity = "" + Math.floor(Math.random() * 19 + 1); // a random quantity
+
+				// now create and send the event to Kafka
+				ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, quantity);
+				producer.send(record, (RecordMetadata metadata, Exception exception) -> {
+					if (exception != null) {
+						exception.printStackTrace();
+					} else {
+						System.out.printf("Generated Event:(Product: \"%s\"; Quantity: %s)%n", key, quantity);
+					}
+				});
+
+				// wait a little
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) 
+				{
+				}
+			}
+			
+			
 		}
 	}
 
