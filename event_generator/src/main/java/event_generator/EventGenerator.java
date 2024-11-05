@@ -32,6 +32,7 @@ public class EventGenerator {
 
 			Random random = new Random();
 			boolean randomizer = random.nextBoolean();
+			int randMili = (int) Math.floor(Math.random() * 2000); // random miliseconds: 0 <= randMili < 2000
 			
 			if (randomizer == true) 
 			{
@@ -50,7 +51,7 @@ public class EventGenerator {
 
 				// wait a little
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(randMili);
 				} catch (InterruptedException e) 
 				{
 				}			
@@ -72,7 +73,7 @@ public class EventGenerator {
 
 				// wait a little
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(randMili);
 				} catch (InterruptedException e) 
 				{
 				}
