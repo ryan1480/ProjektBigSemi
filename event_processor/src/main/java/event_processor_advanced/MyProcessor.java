@@ -8,7 +8,7 @@ public class MyProcessor implements ForeachAction<Windowed<String>, Double>{
 
 	@Override
 	public void apply(Windowed<String> key, Double value) {
-		System.out.println("Added event to the Dashboard: Large Order requiring big box; Products:"+key+"; Average order quantity:"+value);
+		System.out.println("Added event to the Dashboard: Products:"+key+"; Average order quantity:"+value);
 	}
 
 }
