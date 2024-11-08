@@ -15,9 +15,6 @@ import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Suppressed;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.processor.WallclockTimestampExtractor;
-import org.apache.kafka.streams.kstream.Suppressed;
-import org.apache.kafka.streams.kstream.Suppressed.BufferConfig;
-
 
 public class EventProcessorAdvanced {
 
@@ -36,12 +33,9 @@ public class EventProcessorAdvanced {
 
 		final StreamsBuilder builder = new StreamsBuilder();
 
-		KStream<String, String> source = builder.stream(group + "__orders"); // defines stream which consumes messages
-																				// from group 3 orders
-
-		TimeWindows tw = TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5)); // create timewindow object with 5-second
-																				// time windows -> how often aggregation
-																				// triggered
+		KStream<String, String> source = builder.stream(group + "__orders"); // defines stream which consumes messages from group 3 orders
+		TimeWindows tw = TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5)); // create timewindow object with 5-second time windows
+																			
 		source.groupByKey()
 				.windowedBy(tw)
 				.aggregate(
