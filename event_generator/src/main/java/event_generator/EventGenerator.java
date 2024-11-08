@@ -37,15 +37,15 @@ public class EventGenerator {
 			if (randomizer == true) 
 			{
 				String key = "Eco-Socks (Pack of 3)";
-				String quantity = "" + Math.floor(Math.random() * 19 + 1); // a random quantity
+				String value = "" + Math.floor(Math.random() * 10 + 1); // a random quantity
 
 				// Create event and send to kafka
-				ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, quantity);
+				ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, value);
 				producer.send(record, (RecordMetadata metadata, Exception exception) -> {
 					if (exception != null) {
 						exception.printStackTrace();
 					} else {
-						System.out.printf("Generated Event:(Product: \"%s\"; Quantity: %s)%n", key, quantity);
+						System.out.printf("Generated Event:(Product: \"%s\"; Quantity: %s)%n", key, value);
 					}
 				});
 
@@ -59,7 +59,7 @@ public class EventGenerator {
 			else 
 			{
 				String key = "The Eco-Tee";
-				String quantity = "" + Math.floor(Math.random() * 19 + 1); // a random quantity
+				String quantity = "" + Math.floor(Math.random() * 10 + 1); // a random quantity
 
 				// Create event and sent to kafka
 				ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, quantity);

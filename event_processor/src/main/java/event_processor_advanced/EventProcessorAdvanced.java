@@ -32,21 +32,18 @@ public class EventProcessorAdvanced {
 		
 		final StreamsBuilder builder = new StreamsBuilder();
 
-		KStream<String, String> source = builder.stream(group + "__orders");
+		KStream<String, String> source = builder.stream(group + "__orders"); // defines stream which consumes messages from group 3 orders
 		
-		TimeWindows tw = TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5));
-		source.groupByKey().windowedBy(tw).aggregate( 
+		TimeWindows tw = TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5)); // create timewindow object with 5-second time windows -> how often aggregation triggered
+		source.groupByKey().windowedBy(tw).aggregate( // Main functionality: Group by message key (products), apply time window, aggregate
 				() -> new CountAndSum(), 	// the initial value for the aggregation
 				(key,value,aggregate) -> new CountAndSum(    // a lambda function which sums up the values and increases the count of events
-					aggregate.sum + Double.parseDouble(value),
+					aggregate.sum + Double.parseDouble(value), // sum value (order amount)
 					aggregate.count+1)
 				,
                 Materialized.with(Serdes.String(), new AggregateResultSerde())
 				).mapValues( (cs) -> cs.getAverage())
-		.toStream().foreach(new MyProcessor());;
-		
-		
-	
+		.toStream().foreach(new MyProcessor());
 		
 		final Topology topology = builder.build();
 		final KafkaStreams streams = new KafkaStreams(topology, props);

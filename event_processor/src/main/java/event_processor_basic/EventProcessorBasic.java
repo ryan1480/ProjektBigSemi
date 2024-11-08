@@ -32,11 +32,9 @@ public class EventProcessorBasic {
 		KStream<String, String> source = builder.stream(group + "__orders");
 		
 
-		// lets assume that a order quantity > 3 is already noteworthy
-		source.filter( (key,value) -> Double.parseDouble(value) > 3 ).foreach(new MyProcessor());;
-		
-		
-		
+		// we assume that a order quantity > 5 is noteworthy
+		source.filter( (key,value) -> Double.parseDouble(value) > 5 ).foreach(new MyProcessor());
+					
 		final Topology topology = builder.build();
 		final KafkaStreams streams = new KafkaStreams(topology, props);
 		final CountDownLatch latch = new CountDownLatch(1);
