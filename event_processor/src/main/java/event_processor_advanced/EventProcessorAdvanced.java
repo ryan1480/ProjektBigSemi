@@ -12,8 +12,12 @@ import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Suppressed;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.processor.WallclockTimestampExtractor;
+import org.apache.kafka.streams.kstream.Suppressed;
+import org.apache.kafka.streams.kstream.Suppressed.BufferConfig;
+
 
 public class EventProcessorAdvanced {
 
@@ -27,24 +31,30 @@ public class EventProcessorAdvanced {
 		props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 		props.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, WallclockTimestampExtractor.class);
 		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-		
+
 		System.out.println("*** NOTE: it may take a while until the first events arive");
-		
+
 		final StreamsBuilder builder = new StreamsBuilder();
 
-		KStream<String, String> source = builder.stream(group + "__orders"); // defines stream which consumes messages from group 3 orders
-		
-		TimeWindows tw = TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5)); // create timewindow object with 5-second time windows -> how often aggregation triggered
-		source.groupByKey().windowedBy(tw).aggregate( // Main functionality: Group by message key (products), apply time window, aggregate
-				() -> new CountAndSum(), 	// the initial value for the aggregation
-				(key,value,aggregate) -> new CountAndSum(    // a lambda function which sums up the values and increases the count of events
-					aggregate.sum + Double.parseDouble(value), // sum value (order amount)
-					aggregate.count+1)
-				,
-                Materialized.with(Serdes.String(), new AggregateResultSerde())
-				).mapValues( (cs) -> cs.getAverage())
-		.toStream().foreach(new MyProcessor());
-		
+		KStream<String, String> source = builder.stream(group + "__orders"); // defines stream which consumes messages
+																				// from group 3 orders
+
+		TimeWindows tw = TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5)); // create timewindow object with 5-second
+																				// time windows -> how often aggregation
+																				// triggered
+		source.groupByKey()
+				.windowedBy(tw)
+				.aggregate(
+						() -> new CountAndSum(),
+						(key, value, aggregate) -> new CountAndSum(
+								aggregate.sum + Double.parseDouble(value),
+								aggregate.count + 1),
+						Materialized.with(Serdes.String(), new AggregateResultSerde()))
+				.suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()))
+				.mapValues(cs -> cs.getAverage())
+				.toStream()
+				.foreach(new MyProcessor());
+
 		final Topology topology = builder.build();
 		final KafkaStreams streams = new KafkaStreams(topology, props);
 		final CountDownLatch latch = new CountDownLatch(1);
@@ -66,11 +76,11 @@ public class EventProcessorAdvanced {
 		}
 		System.exit(0);
 	}
-	
+
 	static class AggregateResultSerde extends Serdes.WrapperSerde<CountAndSum> {
-        public AggregateResultSerde() {
-            super(new CountAndSum.CountAndSumSerializer(), new CountAndSum.CountAndSumDeserializer());
-        }
-    }
+		public AggregateResultSerde() {
+			super(new CountAndSum.CountAndSumSerializer(), new CountAndSum.CountAndSumDeserializer());
+		}
+	}
 
 }
