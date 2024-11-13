@@ -52,8 +52,7 @@ public class EventGenerator {
 				// wait a little
 				try {
 					Thread.sleep(randMili);
-				} catch (InterruptedException e) 
-				{
+				} catch (InterruptedException e) {
 				}			
 			}
 			else 
@@ -74,8 +73,7 @@ public class EventGenerator {
 				// wait a little
 				try {
 					Thread.sleep(randMili);
-				} catch (InterruptedException e) 
-				{
+				} catch (InterruptedException e) {
 				}
 			}
 			

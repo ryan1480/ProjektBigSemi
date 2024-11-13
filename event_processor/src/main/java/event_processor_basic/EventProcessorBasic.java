@@ -31,7 +31,6 @@ public class EventProcessorBasic {
 
 		KStream<String, String> source = builder.stream(group + "__orders");
 		
-
 		// we assume that a order quantity > 5 is noteworthy
 		source.filter( (key,value) -> Double.parseDouble(value) > 5 ).foreach(new MyProcessor());
 					
